@@ -1,10 +1,17 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
-import { Mail, Phone, MapPin, Send, Github, CheckCircle, AlertCircle, Instagram, Sparkles } from "lucide-react"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { Mail, Phone, MapPin, Send, Github, CheckCircle, AlertCircle, Instagram, Zap,Linkedin } from "lucide-react"
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 const Contact = () => {
+  const sectionRef = useRef(null)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,6 +20,74 @@ const Contact = () => {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null)
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const ctx = gsap.context(() => {
+      // Title animation
+      gsap.fromTo(
+        ".contact-title",
+        {
+          y: 100,
+          opacity: 0,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        },
+      )
+
+      // Form animation
+      gsap.fromTo(
+        ".contact-form",
+        {
+          x: 100,
+          opacity: 0,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".contact-form",
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        },
+      )
+
+      // Contact info animation
+      gsap.fromTo(
+        ".contact-info",
+        {
+          x: -100,
+          opacity: 0,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".contact-info",
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        },
+      )
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
 
   const handleChange = (e) => {
     setFormData({
@@ -27,8 +102,7 @@ const Contact = () => {
     setSubmitStatus(null)
 
     try {
-      const response = await fetch("http://localhost:5000/api/contact", {
-
+      const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,68 +131,52 @@ const Contact = () => {
       title: "Email",
       value: "hridayamdr2007@gmail.com",
       href: "mailto:hridayamdr2007@gmail.com",
-      color: "from-emerald-500 to-teal-600",
     },
     {
       icon: Phone,
       title: "Phone",
       value: "+977 974-9704504",
       href: "tel:+9779749704504",
-      color: "from-teal-500 to-emerald-600",
     },
     {
       icon: MapPin,
       title: "Location",
       value: "Maitidevi, Kathmandu, Nepal",
       href: "#",
-      color: "from-emerald-400 to-teal-500",
     },
   ]
 
   const socialLinks = [
-    { icon: Github, href: "https://github.com/Heartech-Hridaya", label: "GitHub", color: "hover:text-emerald-400" },
-    { icon: Instagram, href: "https://www.instagram.com/heart_mdr/", label: "Instagram", color: "hover:text-teal-400" },
-    { icon: Mail, href: "mailto:hridayamdr2007@gmail.com", label: "Email", color: "hover:text-emerald-400" },
+    { icon: Github, href: "https://github.com/Heartech-Hridaya", label: "GitHub" },
+    { icon: Linkedin, href: "https://www.linkedin.com/in/hridaya-manandhar/", label: "LinkedIn" },
+    { icon: Instagram, href: "https://www.instagram.com/heart_mdr/", label: "Instagram" },
+    { icon: Mail, href: "mailto:hridayamdr2007@gmail.com", label: "Email" },
   ]
 
   return (
-    <section className="py-20 bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white">
+    <section id="contact" ref={sectionRef} className="py-20 bg-gradient-to-b from-black to-primary-900">
       <div className="container mx-auto px-4 sm:px-6">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center justify-center mb-4">
-            <Sparkles className="text-emerald-400 mr-3" size={32} />
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
-              <span className="bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">
-                Get In Touch
-              </span>
-            </h2>
-            <Sparkles className="text-teal-400 ml-3" size={32} />
-          </div>
-          <div className="w-32 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto mb-6 rounded-full"></div>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+        {/* Section Title */}
+        <div className="contact-title text-center mb-20">
+          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black mb-6">
+            <span className="text-white">GET IN</span> <span className="text-gradient-red">TOUCH</span>
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-accent-bright to-accent-red mx-auto mb-8"></div>
+          <p className="text-xl text-primary-300 max-w-3xl mx-auto leading-relaxed">
             I'm always open to discussing new opportunities, AI/ML projects, or just having a chat about technology and
             innovation.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 max-w-7xl mx-auto">
           {/* Contact Information */}
-          <motion.div
-            className="space-y-8"
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="relative p-8 bg-slate-800/50 backdrop-blur-sm rounded-3xl border border-emerald-500/20">
-              <h3 className="text-3xl font-bold text-white mb-6">Let's Connect</h3>
-              <p className="text-gray-300 mb-8 leading-relaxed text-lg">
+          <div className="contact-info space-y-8">
+            <div className="relative p-8 bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10">
+              <div className="flex items-center mb-6">
+                <Zap className="text-accent-bright mr-3" size={32} />
+                <h3 className="text-3xl font-bold text-white">Let's Connect</h3>
+              </div>
+              <p className="text-primary-200 mb-8 leading-relaxed text-lg">
                 Whether you have an AI/ML project in mind, want to collaborate on web development, or just want to
                 discuss the latest in technology, I'd love to hear from you. Feel free to reach out through any of the
                 channels below.
@@ -137,20 +195,15 @@ const Contact = () => {
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                   whileHover={{ scale: 1.02, x: 10 }}
                 >
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-r ${info.color} rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-300`}
-                  ></div>
-                  <div className="relative flex items-center space-x-6 p-6 bg-slate-800/80 backdrop-blur-sm rounded-2xl border border-emerald-500/20 group-hover:border-emerald-500/40 transition-all duration-300">
-                    <div
-                      className={`w-16 h-16 bg-gradient-to-r ${info.color} rounded-2xl flex items-center justify-center`}
-                    >
+                  <div className="relative flex items-center space-x-6 p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-accent-bright/30 transition-all duration-300">
+                    <div className="w-16 h-16 bg-gradient-to-r from-accent-bright to-accent-red rounded-2xl flex items-center justify-center">
                       <info.icon className="text-white" size={28} />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white group-hover:text-emerald-400 transition-colors duration-300 text-lg">
+                      <h4 className="font-semibold text-white group-hover:text-accent-bright transition-colors duration-300 text-lg">
                         {info.title}
                       </h4>
-                      <p className="text-gray-300 text-lg">{info.value}</p>
+                      <p className="text-primary-200 text-lg">{info.value}</p>
                     </div>
                   </div>
                 </motion.a>
@@ -166,7 +219,7 @@ const Contact = () => {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`relative group w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 ${social.color}`}
+                    className="group w-16 h-16 bg-white/5 backdrop-blur-sm rounded-2xl flex items-center justify-center border border-white/10 hover:border-accent-bright/50 hover:bg-accent-bright/10 transition-all duration-300"
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
@@ -174,30 +227,20 @@ const Contact = () => {
                     whileHover={{ scale: 1.1, y: -3 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <div className="absolute inset-0 bg-slate-800/50 backdrop-blur-sm rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div className="absolute inset-0 border border-emerald-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <social.icon className="relative text-gray-400 transition-colors duration-300" size={24} />
+                    <social.icon className="text-white group-hover:text-accent-bright transition-colors" size={24} />
                   </motion.a>
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="relative"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-3xl blur opacity-50"></div>
-
-            <div className="relative bg-slate-800/80 backdrop-blur-xl rounded-3xl p-8 border border-emerald-500/20">
+          <div className="contact-form relative">
+            <div className="relative bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
+                    <label htmlFor="name" className="block text-sm font-medium text-white mb-2">
                       Name
                     </label>
                     <input
@@ -207,12 +250,12 @@ const Contact = () => {
                       value={formData.name}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-slate-700/50 border border-emerald-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-bright focus:border-transparent text-white placeholder-primary-300 transition-all duration-300"
                       placeholder="Your Name"
                     />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                    <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
                       Email
                     </label>
                     <input
@@ -222,14 +265,14 @@ const Contact = () => {
                       value={formData.email}
                       onChange={handleChange}
                       required
-                      className="w-full px-4 py-3 bg-slate-700/50 border border-emerald-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-bright focus:border-transparent text-white placeholder-primary-300 transition-all duration-300"
                       placeholder="your.email@example.com"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label htmlFor="subject" className="block text-sm font-medium text-white mb-2">
                     Subject
                   </label>
                   <input
@@ -239,13 +282,13 @@ const Contact = () => {
                     value={formData.subject}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-emerald-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-white placeholder-gray-400 transition-all duration-300"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-bright focus:border-transparent text-white placeholder-primary-300 transition-all duration-300"
                     placeholder="What's this about?"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label htmlFor="message" className="block text-sm font-medium text-white mb-2">
                     Message
                   </label>
                   <textarea
@@ -255,7 +298,7 @@ const Contact = () => {
                     onChange={handleChange}
                     required
                     rows={6}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-emerald-500/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-white placeholder-gray-400 resize-none transition-all duration-300"
+                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-accent-bright focus:border-transparent text-white placeholder-primary-300 resize-none transition-all duration-300"
                     placeholder="Tell me about your project or just say hello!"
                   />
                 </div>
@@ -288,13 +331,11 @@ const Contact = () => {
                 <motion.button
                   type="submit"
                   disabled={isSubmitting}
-                  className="relative group w-full py-4 rounded-2xl font-semibold transition-all duration-300 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="relative group w-full py-4 rounded-2xl font-bold text-lg transition-all duration-300 overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-accent-bright to-accent-red text-white hover:shadow-lg hover:shadow-accent-bright/25"
                   whileHover={{ scale: isSubmitting ? 1 : 1.02 }}
                   whileTap={{ scale: isSubmitting ? 1 : 0.98 }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-2xl"></div>
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="relative flex items-center justify-center space-x-3 text-white text-lg">
+                  <div className="relative flex items-center justify-center space-x-3">
                     {isSubmitting ? (
                       <>
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -310,7 +351,7 @@ const Contact = () => {
                 </motion.button>
               </form>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

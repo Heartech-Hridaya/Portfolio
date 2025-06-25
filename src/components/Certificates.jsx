@@ -1,6 +1,9 @@
 "use client"
 
+import { useEffect, useRef } from "react"
 import { motion } from "framer-motion"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
 import {
   Award,
   Calendar,
@@ -12,10 +15,69 @@ import {
   Code,
   Brain,
   MapPin,
-  Sparkles,
+  Zap,
 } from "lucide-react"
 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger)
+}
+
 const Certificates = () => {
+  const sectionRef = useRef(null)
+  const cardsRef = useRef(null)
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const ctx = gsap.context(() => {
+      // Title animation
+      gsap.fromTo(
+        ".certificates-title",
+        {
+          y: 100,
+          opacity: 0,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        },
+      )
+
+      // Cards flip animation
+      gsap.fromTo(
+        cardsRef.current.children,
+        {
+          y: 150,
+          opacity: 0,
+          rotationY: -90,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          rotationY: 0,
+          duration: 1.2,
+          stagger: 0.2,
+          ease: "back.out(1.7)",
+          scrollTrigger: {
+            trigger: cardsRef.current,
+            start: "top 70%",
+            end: "bottom 30%",
+            toggleActions: "play none none reverse",
+          },
+        },
+      )
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
   const certificates = [
     {
       title: "Graphic Designing",
@@ -26,9 +88,7 @@ const Certificates = () => {
       skills: ["Graphic Design", "Design Principles", "Typography", "Color Theory"],
       credentialUrl: "#",
       verified: true,
-      image: "/placeholder.svg?height=200&width=300",
       icon: Palette,
-      color: "from-emerald-500 to-teal-600",
     },
     {
       title: "Communicating Data Insights",
@@ -39,9 +99,7 @@ const Certificates = () => {
       skills: ["Data Communication", "Storytelling", "Visualization", "Presentation"],
       credentialUrl: "https://datacamp.com/certificate",
       verified: true,
-      image: "/placeholder.svg?height=200&width=300",
       icon: BarChart3,
-      color: "from-teal-500 to-emerald-600",
     },
     {
       title: "Introduction to Data",
@@ -52,9 +110,7 @@ const Certificates = () => {
       skills: ["Data Fundamentals", "Data Types", "Data Collection", "Basic Analysis"],
       credentialUrl: "https://datacamp.com/certificate",
       verified: true,
-      image: "/placeholder.svg?height=200&width=300",
       icon: BarChart3,
-      color: "from-emerald-400 to-teal-500",
     },
     {
       title: "Introduction to Python",
@@ -65,9 +121,7 @@ const Certificates = () => {
       skills: ["Python", "Programming Fundamentals", "Data Structures", "Syntax"],
       credentialUrl: "https://datacamp.com/certificate",
       verified: true,
-      image: "/placeholder.svg?height=200&width=300",
       icon: Code,
-      color: "from-teal-400 to-emerald-500",
     },
     {
       title: "Python Intermediate for ML",
@@ -78,9 +132,7 @@ const Certificates = () => {
       skills: ["Python", "Machine Learning", "NumPy", "Pandas", "Scikit-learn"],
       credentialUrl: "https://datacamp.com/certificate",
       verified: true,
-      image: "/placeholder.svg?height=200&width=300",
       icon: Brain,
-      color: "from-emerald-500 to-teal-600",
     },
     {
       title: "AI and Its Applications",
@@ -91,84 +143,38 @@ const Certificates = () => {
       skills: ["Artificial Intelligence", "AI Applications", "Machine Learning", "Technology Innovation"],
       credentialUrl: "#",
       verified: true,
-      image: "/placeholder.svg?height=200&width=300",
       icon: MapPin,
-      color: "from-teal-500 to-emerald-600",
     },
   ]
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.3,
-        staggerChildren: 0.2,
-      },
-    },
-  }
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-      },
-    },
-  }
-
   return (
-    <section className="py-20 bg-gradient-to-b from-slate-900 to-black">
+    <section id="certificates" ref={sectionRef} className="py-20 bg-gradient-to-b from-primary-900 to-black">
       <div className="container mx-auto px-4 sm:px-6">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center justify-center mb-4">
-            <Sparkles className="text-emerald-400 mr-3" size={32} />
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
-              <span className="bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">
-                Certificates & Achievements
-              </span>
-            </h2>
-            <Sparkles className="text-teal-400 ml-3" size={32} />
-          </div>
-          <div className="w-32 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto mb-6 rounded-full"></div>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+        {/* Section Title */}
+        <div className="certificates-title text-center mb-20">
+          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black mb-6">
+            <span className="text-white">CERTIFICATES &</span> <span className="text-gradient-red">ACHIEVEMENTS</span>
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-accent-bright to-accent-red mx-auto mb-8"></div>
+          <p className="text-xl text-primary-300 max-w-3xl mx-auto leading-relaxed">
             Continuous learning journey in AI/ML, data science, programming, and design
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-        >
+        <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {certificates.map((cert, index) => (
             <motion.div
               key={cert.title}
               className="relative group"
-              variants={itemVariants}
               whileHover={{ scale: 1.02, y: -8 }}
+              transition={{ duration: 0.3 }}
             >
-              {/* Glowing background */}
-              <div
-                className={`absolute inset-0 bg-gradient-to-r ${cert.color} rounded-3xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-300`}
-              ></div>
-
-              {/* Card content */}
-              <div className="relative bg-slate-800/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-emerald-500/20 group-hover:border-emerald-500/40 transition-all duration-300">
+              {/* Card */}
+              <div className="relative bg-white/5 backdrop-blur-sm rounded-3xl overflow-hidden border border-white/10 hover:border-accent-bright/30 transition-all duration-300">
                 {/* Certificate Header */}
-                <div className="relative h-48 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center overflow-hidden">
-                  <cert.icon className="text-emerald-400/30" size={80} />
-                  <div className={`absolute inset-0 bg-gradient-to-r ${cert.color} opacity-10`}></div>
+                <div className="relative h-48 bg-gradient-to-br from-primary-800 to-primary-900 flex items-center justify-center overflow-hidden">
+                  <cert.icon className="text-white/30" size={80} />
+                  <div className="absolute inset-0 bg-gradient-to-r from-accent-bright/10 to-accent-red/10"></div>
 
                   {/* Verified Badge */}
                   {cert.verified && (
@@ -188,30 +194,27 @@ const Certificates = () => {
                 <div className="p-8">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
-                      <h3 className="text-xl font-bold text-white group-hover:text-emerald-400 transition-colors duration-300 line-clamp-2">
+                      <h3 className="text-xl font-bold text-white group-hover:text-accent-bright transition-colors duration-300 line-clamp-2">
                         {cert.title}
                       </h3>
                       <div className="flex items-center space-x-2 mt-2">
-                        <Award className="text-teal-500" size={16} />
-                        <p className="text-teal-400 font-medium text-sm">{cert.issuer}</p>
+                        <Award className="text-accent-red" size={16} />
+                        <p className="text-accent-bright font-medium text-sm">{cert.issuer}</p>
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-gray-300 mb-6 text-sm leading-relaxed line-clamp-3">{cert.description}</p>
+                  <p className="text-primary-200 mb-6 text-sm leading-relaxed line-clamp-3">{cert.description}</p>
 
                   {/* Skills */}
                   <div className="flex flex-wrap gap-2 mb-6">
                     {cert.skills.slice(0, 3).map((skill) => (
-                      <span
-                        key={skill}
-                        className="px-3 py-1 bg-emerald-900/30 text-emerald-300 text-xs rounded-full font-medium"
-                      >
+                      <span key={skill} className="px-3 py-1 bg-white/10 text-white text-xs rounded-full font-medium">
                         {skill}
                       </span>
                     ))}
                     {cert.skills.length > 3 && (
-                      <span className="px-3 py-1 bg-slate-700 text-gray-400 text-xs rounded-full font-medium">
+                      <span className="px-3 py-1 bg-accent-red/20 text-accent-bright text-xs rounded-full font-medium">
                         +{cert.skills.length - 3} more
                       </span>
                     )}
@@ -223,7 +226,7 @@ const Certificates = () => {
                       href={cert.credentialUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center space-x-2 text-emerald-400 hover:text-emerald-300 transition-colors duration-200 text-sm font-medium"
+                      className="flex items-center space-x-2 text-accent-bright hover:text-white transition-colors duration-200 text-sm font-medium"
                       whileHover={{ scale: 1.05 }}
                     >
                       <ExternalLink size={14} />
@@ -231,7 +234,7 @@ const Certificates = () => {
                     </motion.a>
 
                     <motion.button
-                      className="flex items-center space-x-2 text-gray-400 hover:text-gray-300 transition-colors duration-200 text-sm font-medium"
+                      className="flex items-center space-x-2 text-primary-300 hover:text-white transition-colors duration-200 text-sm font-medium"
                       whileHover={{ scale: 1.05 }}
                     >
                       <Download size={14} />
@@ -242,35 +245,34 @@ const Certificates = () => {
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
         {/* Stats Section */}
         <motion.div
           className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto"
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.8 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
         >
           {[
-            { number: "6+", label: "Certificates" },
-            { number: "3", label: "Platforms" },
-            { number: "100%", label: "Verified" },
-            { number: "2024", label: "Latest" },
+            { number: "6+", label: "Certificates", icon: Award },
+            { number: "3", label: "Platforms", icon: Code },
+            { number: "100%", label: "Verified", icon: CheckCircle },
+            { number: "2024", label: "Latest", icon: Zap },
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
-              className="text-center p-6 bg-slate-800/30 backdrop-blur-sm rounded-2xl border border-emerald-500/10"
+              className="text-center p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-accent-bright/30 transition-all duration-300"
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
               whileHover={{ scale: 1.05, y: -3 }}
             >
-              <div className="text-4xl font-bold bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent mb-2">
-                {stat.number}
-              </div>
-              <div className="text-gray-400 font-medium">{stat.label}</div>
+              <stat.icon className="text-accent-bright mx-auto mb-3" size={32} />
+              <div className="text-4xl font-bold text-gradient-red mb-2">{stat.number}</div>
+              <div className="text-primary-300 font-medium">{stat.label}</div>
             </motion.div>
           ))}
         </motion.div>

@@ -12,8 +12,7 @@ import Experience from "./components/Experience"
 import Contact from "./components/Contact"
 import Footer from "./components/Footer"
 
-
-export default function Portfolio() {
+export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -26,7 +25,7 @@ export default function Portfolio() {
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-gray-900 to-black flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-black flex items-center justify-center z-50">
         <motion.div
           className="text-center"
           initial={{ opacity: 0, scale: 0.5 }}
@@ -34,7 +33,7 @@ export default function Portfolio() {
           transition={{ duration: 0.5 }}
         >
           <motion.div
-            className="w-16 h-16 border-4 border-emerald-400 border-t-transparent rounded-full mx-auto mb-4"
+            className="w-16 h-16 border-4 border-accent-bright border-t-transparent rounded-full mx-auto mb-4"
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
           />
@@ -52,9 +51,9 @@ export default function Portfolio() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-900">
-      <Header />
+    <div className="min-h-screen bg-black">
       <main>
+        <Header />
         <Hero />
         <About />
         <Skills />
@@ -65,6 +64,5 @@ export default function Portfolio() {
       </main>
       <Footer />
     </div>
-    
   )
 }

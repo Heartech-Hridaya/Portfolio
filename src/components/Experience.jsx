@@ -1,9 +1,69 @@
 "use client"
 
+import { useEffect, useRef } from "react"
 import { motion } from "framer-motion"
-import { Calendar, MapPin, Briefcase, Trophy, Code, Award, Sparkles } from "lucide-react"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { Calendar, MapPin, Briefcase, Trophy, Code, Award } from "lucide-react"
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 const Experience = () => {
+  const sectionRef = useRef(null)
+  const timelineRef = useRef(null)
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+
+    const ctx = gsap.context(() => {
+      // Title animation
+      gsap.fromTo(
+        ".experience-title",
+        {
+          y: 100,
+          opacity: 0,
+        },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+            toggleActions: "play none none reverse",
+          },
+        },
+      )
+
+      // Timeline items animation
+      gsap.fromTo(
+        timelineRef.current.children,
+        {
+          x: -100,
+          opacity: 0,
+        },
+        {
+          x: 0,
+          opacity: 1,
+          duration: 1,
+          stagger: 0.3,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: timelineRef.current,
+            start: "top 70%",
+            end: "bottom 30%",
+            toggleActions: "play none none reverse",
+          },
+        },
+      )
+    }, sectionRef)
+
+    return () => ctx.revert()
+  }, [])
+
   const experiences = [
     {
       title: "Web Developer",
@@ -20,7 +80,6 @@ const Experience = () => {
       ],
       technologies: ["React.js", "Tailwind CSS", "Framer Motion", "Three.js"],
       icon: Code,
-      color: "from-emerald-500 to-teal-600",
     },
     {
       title: "Hackathon Winner",
@@ -37,7 +96,6 @@ const Experience = () => {
       ],
       technologies: ["Python", "Machine Learning", "React.js", "API Integration"],
       icon: Trophy,
-      color: "from-teal-500 to-emerald-600",
     },
     {
       title: "AI/ML Learning Journey",
@@ -54,83 +112,58 @@ const Experience = () => {
       ],
       technologies: ["Python", "NumPy", "Pandas", "Matplotlib", "Seaborn", "Jupyter"],
       icon: Award,
-      color: "from-emerald-400 to-teal-500",
     },
   ]
 
   const getTypeBadge = (type) => {
     switch (type) {
       case "project":
-        return { text: "Current Project", color: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" }
+        return { text: "Current Project", color: "bg-accent-bright/20 text-accent-bright border-accent-bright/30" }
       case "achievement":
-        return { text: "Achievement", color: "bg-teal-500/20 text-teal-400 border-teal-500/30" }
+        return { text: "Achievement", color: "bg-accent-red/20 text-accent-red border-accent-red/30" }
       case "learning":
-        return { text: "Learning", color: "bg-emerald-400/20 text-emerald-300 border-emerald-400/30" }
+        return { text: "Learning", color: "bg-white/20 text-white border-white/30" }
       default:
-        return { text: "Experience", color: "bg-gray-500/20 text-gray-400 border-gray-500/30" }
+        return { text: "Experience", color: "bg-white/20 text-white border-white/30" }
     }
   }
 
   return (
-    <section className="py-20 bg-gradient-to-b from-black to-slate-900">
+    <section id="experience" ref={sectionRef} className="py-20 bg-black">
       <div className="container mx-auto px-4 sm:px-6">
-        <motion.div
-          className="text-center mb-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <div className="flex items-center justify-center mb-4">
-            <Sparkles className="text-emerald-400 mr-3" size={32} />
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
-              <span className="bg-gradient-to-r from-emerald-400 to-teal-500 bg-clip-text text-transparent">
-                Experience & Achievements
-              </span>
-            </h2>
-            <Sparkles className="text-teal-400 ml-3" size={32} />
-          </div>
-          <div className="w-32 h-1 bg-gradient-to-r from-emerald-500 to-teal-600 mx-auto mb-6 rounded-full"></div>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+        {/* Section Title */}
+        <div className="experience-title text-center mb-20">
+          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-black mb-6">
+            <span className="text-white">EXPERIENCE &</span> <span className="text-gradient-red">ACHIEVEMENTS</span>
+          </h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-accent-bright to-accent-red mx-auto mb-8"></div>
+          <p className="text-xl text-primary-300 max-w-3xl mx-auto leading-relaxed">
             My journey in technology, from winning hackathons to building real-world applications
           </p>
-        </motion.div>
+        </div>
 
         <div className="max-w-6xl mx-auto">
-          <div className="relative">
+          <div className="relative" ref={timelineRef}>
             {/* Timeline line */}
-            <div className="absolute left-4 sm:left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-500 via-teal-500 to-emerald-400 rounded-full"></div>
+            <div className="absolute left-4 sm:left-8 top-0 bottom-0 w-5 bg-red-900 rounded-full"></div>
 
             {experiences.map((experience, index) => (
               <motion.div
                 key={experience.title + experience.company}
                 className="relative flex items-start mb-16 last:mb-0"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
+                whileHover={{ scale: 1.02, y: -5 }}
+                transition={{ duration: 0.3 }}
               >
                 {/* Timeline dot */}
-                <div
-                  className={`absolute left-2 sm:left-6 w-8 h-8 bg-gradient-to-r ${experience.color} rounded-full border-4 border-slate-900 shadow-lg flex items-center justify-center z-10`}
-                >
+                <div className="absolute left-2 sm:left-6 w-8 h-8 bg-gradient-to-r from-accent-bright to-accent-red rounded-full border-4 border-black shadow-lg flex items-center justify-center z-10">
                   <experience.icon className="text-white" size={16} />
                 </div>
 
                 {/* Content */}
                 <div className="ml-16 sm:ml-24 w-full">
-                  <motion.div
-                    className="relative group"
-                    whileHover={{ scale: 1.02, y: -5 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    {/* Glowing background */}
-                    <div
-                      className={`absolute inset-0 bg-gradient-to-r ${experience.color} rounded-3xl blur opacity-20 group-hover:opacity-30 transition-opacity duration-300`}
-                    ></div>
-
-                    {/* Card content */}
-                    <div className="relative bg-slate-800/80 backdrop-blur-xl rounded-3xl p-8 border border-emerald-500/20 group-hover:border-emerald-500/40 transition-all duration-300">
+                  <div className="relative group">
+                    {/* Card */}
+                    <div className="relative bg-white/5 backdrop-blur-sm rounded-3xl p-8 border border-white/10 hover:border-accent-bright/30 transition-all duration-300">
                       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
                         <div className="mb-4 lg:mb-0">
                           <div className="flex items-center gap-4 mb-3">
@@ -141,10 +174,10 @@ const Experience = () => {
                               {getTypeBadge(experience.type).text}
                             </span>
                           </div>
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-gray-400 mb-2">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-primary-300 mb-2">
                             <div className="flex items-center space-x-2">
                               <Briefcase size={18} />
-                              <span className="font-semibold text-emerald-400 text-lg">{experience.company}</span>
+                              <span className="font-semibold text-accent-bright text-lg">{experience.company}</span>
                             </div>
                             <div className="flex items-center space-x-2">
                               <MapPin size={18} />
@@ -152,7 +185,7 @@ const Experience = () => {
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2 text-teal-400 font-semibold text-lg">
+                        <div className="flex items-center space-x-2 text-accent-red font-semibold text-lg">
                           <Calendar size={18} />
                           <span>{experience.period}</span>
                         </div>
@@ -162,13 +195,13 @@ const Experience = () => {
                         {experience.description.map((item, itemIndex) => (
                           <motion.li
                             key={itemIndex}
-                            className="flex items-start space-x-3 text-gray-300"
+                            className="flex items-start space-x-3 text-primary-200"
                             initial={{ opacity: 0, x: -10 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ duration: 0.3, delay: itemIndex * 0.1 }}
                           >
-                            <span className="w-2 h-2 bg-emerald-400 rounded-full mt-2 flex-shrink-0"></span>
+                            <span className="w-2 h-2 bg-accent-bright rounded-full mt-2 flex-shrink-0"></span>
                             <span className="text-lg leading-relaxed">{item}</span>
                           </motion.li>
                         ))}
@@ -178,7 +211,7 @@ const Experience = () => {
                         {experience.technologies.map((tech, techIndex) => (
                           <motion.span
                             key={tech}
-                            className="px-4 py-2 bg-slate-700/50 border border-emerald-500/30 rounded-2xl text-emerald-400 font-medium hover:border-emerald-400/50 transition-all duration-300"
+                            className="px-4 py-2 bg-white/10 border border-white/20 rounded-2xl text-white font-medium hover:border-accent-bright/50 hover:bg-accent-bright/10 transition-all duration-300"
                             initial={{ opacity: 0, scale: 0.8 }}
                             whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
@@ -190,7 +223,7 @@ const Experience = () => {
                         ))}
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 </div>
               </motion.div>
             ))}
