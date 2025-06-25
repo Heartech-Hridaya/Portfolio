@@ -70,16 +70,16 @@ const Hero = () => {
         animate="visible"
       >
         {/* Profile Section */}
-        <motion.div className="mb-12" variants={itemVariants}>
+        <motion.div className="mb-1" variants={itemVariants}>
           <div className="relative inline-block">
             <motion.div
-              className="w-32 h-32 mx-auto mb-6 relative"
+              className="w-32 h-32 mx-auto mb-5 mt-20 relative"
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
             >
               {/* Animated Border */}
               <motion.div
-                className="absolute inset-0 rounded-full bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-400 p-1"
+                className="absolute inset-0 py-2 rounded-full bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-400 p-1"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
               >
@@ -125,7 +125,7 @@ const Hero = () => {
         </motion.div>
 
         {/* Name and Title */}
-        <motion.div className="mb-8" variants={itemVariants}>
+        <motion.div className="mb-4" variants={itemVariants}>
           <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold mb-4">
             <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
               Hridaya Manandhar
